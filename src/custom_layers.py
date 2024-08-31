@@ -89,7 +89,10 @@ class CustomSoftmaxLayer(torch.autograd.Function):
         dim = ctx.dim
 
         # YOUR IMPLEMENTATION HERE!
-        grad_input = 1
+        grad_input = grad_output.clone()
+
+        the_gradient = torch.matmul(torch.eye(dim), softmax_output)
+        grad_input = torch.matmul(the_gradient, grad_output) - torch.matmul(softmax_output, grad_output)
 
         # print(grad_input.shape)
         return grad_input, None
