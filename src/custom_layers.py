@@ -10,11 +10,11 @@ class CustomLinearLayer(torch.autograd.Function):
         # bias shape - output dimension
 
         # implement y = x (mult) w_transpose + b
-
         weight_T = torch.transpose(weight, 0, 1)
-        y = torch.matmul(input, weight_T) + bias
-        output = y
+        y =  torch.matmul(input, weight_T) + bias
+        # YOUR IMPLEMENTATION HERE!
         # output=1 is a placeholder
+        output = y
 
         return output
 
@@ -36,7 +36,6 @@ class CustomLinearLayer(torch.autograd.Function):
         grad_input = grad_weight = grad_bias = None
         grad_output_t = torch.transpose(grad_output, 0, 1)
 
-        # YOUR IMPLEMENTATION HERE!
         #input_t = torch.transpose(input, 0, 1)
         #weight_t = torch.transpose(weight, 0, 1)
 
@@ -45,7 +44,7 @@ class CustomLinearLayer(torch.autograd.Function):
         grad_input = torch.matmul(grad_output,weight)
         # use either print or logger to print its outputs.
         # make sure you disable before submitting
-        print(grad_input)
+        # print(grad_input)
         logger.info("grad_output: %s", grad_bias.shape)
 
         return grad_input, grad_weight, grad_bias
@@ -55,8 +54,8 @@ class CustomReLULayer(torch.autograd.Function):
     def forward(ctx, input):
         ctx.save_for_backward(input)
 
-        # YOUR IMPLEMENTATION HERE!
-        output = 1
+        # output=1 is a placeholder
+        output = torch.where(input < 0.0, 0.0, input)
         return output
 
     @staticmethod
@@ -64,7 +63,8 @@ class CustomReLULayer(torch.autograd.Function):
         input, = ctx.saved_tensors
 
         grad_input = grad_output.clone()
-        # YOUR IMPLEMENTATION HERE!
+
+        grad_input  = grad_output * torch.where(input < 0.0, 0.0, 1)
         
         return grad_input
 
@@ -75,8 +75,8 @@ class CustomSoftmaxLayer(torch.autograd.Function):
         # https://pytorch.org/docs/stable/generated/torch.nn.Softmax.html
         # https://stackoverflow.com/questions/34968722/how-to-implement-the-softmax-function-in-python
 
-        # YOUR IMPLEMENTATION HERE!
-        softmax_output = 1
+        sm = torch.nn.Softmax(dim=dim)
+        softmax_output = sm(input)
 
         ctx.save_for_backward(softmax_output)
         ctx.dim = dim
