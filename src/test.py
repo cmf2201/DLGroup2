@@ -78,7 +78,8 @@ def test_part1_sm():
     u2.requires_grad_()
     customLayer = net.CustomSoftmax(1)
     inbuiltLayer = nn.Softmax()
-
+    #print(inbuiltLayer)
+    
     y_custom = customLayer(u1)
     y_inbuilt = inbuiltLayer(u2)
 
@@ -89,6 +90,10 @@ def test_part1_sm():
 
     loss_custom.backward()
     loss_in.backward()
+    print("U1: ")
+    print(u1.grad)
+    print("U2: ")
+    print(u2.grad)
 
     assert torch.allclose(u1.grad, u2.grad, rtol=1e-4)
 
