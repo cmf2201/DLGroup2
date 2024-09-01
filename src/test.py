@@ -93,7 +93,7 @@ def test_part1_sm():
     print("U1: ")
     print(u1.grad)
     print("U2: ")
-    print(u2.grad)
+    print(u2)
 
     assert torch.allclose(u1.grad, u2.grad, rtol=1e-4)
 
