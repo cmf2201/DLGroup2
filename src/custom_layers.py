@@ -88,16 +88,12 @@ class CustomSoftmaxLayer(torch.autograd.Function):
         softmax_output, = ctx.saved_tensors
         dim = ctx.dim
 
-        # YOUR IMPLEMENTATION HERE!
         grad_input = grad_output.clone()
         i = torch.eye(3)
         softmax_output_t = torch.transpose(softmax_output, 0, 1)
         grad = i - softmax_output_t
         J = torch.matmul(softmax_output, grad)
-        print(J)
         grad_input = J * grad_output
-        print("Grad_input:" )
-        print(grad_input)
         return grad_input, None
 
 class CustomConvLayer(torch.autograd.Function):
