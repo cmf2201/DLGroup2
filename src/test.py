@@ -50,7 +50,7 @@ def test_part1_linear_grad():
 def test_part1_relu():
     # RELU
     print("\nRELU")
-    u1 = torch.rand((1, 10), requires_grad=True)
+    u1 = torch.rand((4, 10), requires_grad=True)
     u2 = u1.detach().clone()
     u2.requires_grad_()
 

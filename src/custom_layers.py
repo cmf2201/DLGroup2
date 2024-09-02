@@ -64,7 +64,9 @@ class CustomReLULayer(torch.autograd.Function):
 
         grad_input = grad_output.clone()
 
-        grad_input  = grad_output * torch.where(input < 0.0, 0.0, 1)
+        # Run the backward pass for each batch.
+        for i in range(grad_output.shape[0]):
+            grad_input[i] = grad_output[i] * torch.where(input[i] < 0.0, 0.0, 1)
         
         return grad_input
 
