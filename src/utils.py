@@ -78,7 +78,6 @@ class Pipeline:
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
             cm = confusion_matrix(y_true, y_pred, labels=classes)
-            print(y_pred)
             disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
             disp.plot(cmap=plt.cm.Blues)
             plt.title('Confusion Matrix', fontsize=15, pad=20)
