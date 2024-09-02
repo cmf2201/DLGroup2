@@ -6,6 +6,7 @@ import torchvision
 import matplotlib.pyplot as plt
 import numpy as np
 
+
 class Pipeline:
     def __init__(self):
 
@@ -52,6 +53,10 @@ class Pipeline:
     def val_step(self, model):
         correct = 0
         total = 0
+        y_true = []
+        y_pred = []
+        classes = ['plane', 'car', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+
         model.eval()
         with torch.no_grad():
             for batchcount, (images, labels) in enumerate(self.testloader):
@@ -62,8 +67,29 @@ class Pipeline:
 
                 _, predicted = torch.max(y, 1)
 
+                for label_index in range(labels.size(dim=0)):     
+                    label_num = labels[label_index].item()
+                    predicted_num = predicted[label_index].item()
+
+                    y_true.append(classes[label_num])
+                    y_pred.append(classes[predicted_num])
+
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
+            cm = confusion_matrix(y_true, y_pred, labels=classes)
+            print(y_pred)
+            disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=classes)
+            disp.plot(cmap=plt.cm.Blues)
+            plt.title('Confusion Matrix', fontsize=15, pad=20)
+            plt.xlabel('Prediction', fontsize=11)
+            plt.ylabel('Actual', fontsize=11)
+            #Customizations
+            plt.gca().xaxis.set_label_position('top')
+            plt.gca().xaxis.tick_top()
+            plt.gca().figure.subplots_adjust(bottom=0.2)
+            plt.gca().figure.text(0.5, 0.05, 'Prediction', ha='center', fontsize=13)
+
+            plt.show()
 
         return correct*100/total
 
