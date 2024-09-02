@@ -6,6 +6,7 @@ import custom_layers as cl
 importlib.reload(cl)
 import math
 
+
 from utils import *
 
 class CustomLinear(nn.Module):
@@ -126,14 +127,25 @@ class RefCNN(nn.Module):
     def __init__(s):
         super().__init__()
 
-        # YOUR IMPLEMENTATION HERE!
-        # s.conv = nn.Sequential(
-        # )
+        s.conv = nn.Sequential(
+            nn.Conv2d(in_channels=1, out_channels=16,
+			kernel_size=(3), stride = 2),
+            nn.ReLU(),
+            nn.Conv2d(in_channels=16, out_channels=64,
+			kernel_size=(3), stride = 2),
+            nn.ReLU()
+        )
 
+        s.model = nn.Sequential(
+            nn.Linear(in_features=3136, out_features=512),
+            nn.ReLU(),
 
-        # YOUR IMPLEMENTATION HERE!
-        # s.model = nn.Sequential(
-        # )
+            nn.Linear(in_features = 512, out_features = 128),
+            nn.ReLU(),
+
+            nn.Linear(in_features = 128, out_features = 10),
+            nn.LogSoftmax(dim=1)
+        )
 
     def forward(s, x):
         x = s.conv(x)

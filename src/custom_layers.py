@@ -11,7 +11,7 @@ class CustomLinearLayer(torch.autograd.Function):
 
         # implement y = x (mult) w_transpose + b
         weight_T = torch.transpose(weight, 0, 1)
-        y =  torch.matmul(input, weight_T) + bias
+        y = torch.matmul(input, weight_T) + bias
         # YOUR IMPLEMENTATION HERE!
         # output=1 is a placeholder
         output = y
