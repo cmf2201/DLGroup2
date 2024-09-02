@@ -5,6 +5,7 @@ import torchvision.transforms as transforms
 import torchvision
 import matplotlib.pyplot as plt
 import numpy as np
+from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
 
 
 class Pipeline:
