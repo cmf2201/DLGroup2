@@ -94,23 +94,23 @@ class CustomSoftmaxLayer(torch.autograd.Function):
         # print(softmax_output_t.shape)
         # print(grad_output.shape)
         grad_input = grad_output.clone()
-        if(softmax_output_t.shape[1] == grad_output.shape[0]):
-            i = i.unsqueeze(2)
-            softmax_output_t = softmax_output_t.unsqueeze(1)
-            # print(i.shape)
-            # print(softmax_output_t.shape)
-            grad = torch.subtract(i, softmax_output_t)
-           # print(grad.shape)
-            grad = grad[:,:,0]
-            #grad = grad.squeeze(2)
-            # print("Final grad: ")
-            # print(grad.shape)
-            J = torch.matmul(softmax_output, grad)
-            grad_input = J * grad_output
-        else:
-            J = - torch.matmul(softmax_output_t, softmax_output)
-            # print(J.shape)
-            grad_input = torch.matmul(grad_output, J)
+
+        # For each batch, calculate the Jacobian matrix
+        for i2,grad_b,softmax_b in zip(range(grad_output.shape[0]),grad_output,softmax_output):
+            softmax_t_b = torch.unsqueeze(softmax_b,1) # Transpose softmax_b
+            if(softmax_t_b.shape[0] == grad_b.shape[0]): # Check if the dimensions are correct. Note that grad_b has one less dimension, so for both only the first element is looked at
+
+                # subtract softmax from i
+                iden_soft = torch.subtract(i, softmax_b)
+
+                # Jacobian matrix fro softmax and iden_soft
+                J = torch.matmul(torch.diag(softmax_b),iden_soft)
+                grad_input[i2] = torch.matmul(J,grad_b)
+            else:
+                print("not good")
+                J = - torch.matmul(softmax_output_t, softmax_output)
+                # print(J.shape)
+                grad_input = torch.matmul(grad_output, J)
         return grad_input, None
 
 class CustomConvLayer(torch.autograd.Function):

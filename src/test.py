@@ -4,7 +4,9 @@ import torch
 import torch.nn as nn
 
 import networks as net
+import os
 import pytest
+
 
 def test_part1_linear():
     print("\nLinear")
@@ -73,7 +75,7 @@ def test_part1_sm():
     # SOFTMAX
     print("\n SoftMax")
 
-    u1 = torch.rand((1, 3), requires_grad=True)
+    u1 = torch.rand((5, 7), requires_grad=True)
     u2 = u1.detach().clone()
     u2.requires_grad_()
     customLayer = net.CustomSoftmax(1)
