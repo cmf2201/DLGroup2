@@ -87,13 +87,30 @@ class CustomSoftmaxLayer(torch.autograd.Function):
     def backward(ctx, grad_output):
         softmax_output, = ctx.saved_tensors
         dim = ctx.dim
-
-        grad_input = grad_output.clone()
-        i = torch.eye(3)
         softmax_output_t = torch.transpose(softmax_output, 0, 1)
-        grad = i - softmax_output_t
-        J = torch.matmul(softmax_output, grad)
-        grad_input = J * grad_output
+
+        i = torch.eye(softmax_output.shape[1])
+        # print(i.shape)
+        # print(softmax_output_t.shape)
+        # print(grad_output.shape)
+        grad_input = grad_output.clone()
+        if(softmax_output_t.shape[1] == grad_output.shape[0]):
+            i = i.unsqueeze(2)
+            softmax_output_t = softmax_output_t.unsqueeze(1)
+            # print(i.shape)
+            # print(softmax_output_t.shape)
+            grad = torch.subtract(i, softmax_output_t)
+           # print(grad.shape)
+            grad = grad[:,:,0]
+            #grad = grad.squeeze(2)
+            # print("Final grad: ")
+            # print(grad.shape)
+            J = torch.matmul(softmax_output, grad)
+            grad_input = J * grad_output
+        else:
+            J = - torch.matmul(softmax_output_t, softmax_output)
+            # print(J.shape)
+            grad_input = torch.matmul(grad_output, J)
         return grad_input, None
 
 class CustomConvLayer(torch.autograd.Function):
