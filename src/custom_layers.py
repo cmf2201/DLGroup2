@@ -11,9 +11,10 @@ class CustomLinearLayer(torch.autograd.Function):
 
         # implement y = x (mult) w_transpose + b
 
-        # YOUR IMPLEMENTATION HERE!
+        weight_T = torch.transpose(weight, 0, 1)
+        y = torch.matmul(input, weight_T) + bias
+        output = y
         # output=1 is a placeholder
-        output = 1
 
         return output
 
@@ -33,13 +34,19 @@ class CustomLinearLayer(torch.autograd.Function):
 
         input, weight, bias = ctx.saved_tensors
         grad_input = grad_weight = grad_bias = None
+        grad_output_t = torch.transpose(grad_output, 0, 1)
 
         # YOUR IMPLEMENTATION HERE!
+        #input_t = torch.transpose(input, 0, 1)
+        #weight_t = torch.transpose(weight, 0, 1)
 
+        grad_weight = torch.matmul(grad_output_t,input)
+        grad_bias = grad_output 
+        grad_input = torch.matmul(grad_output,weight)
         # use either print or logger to print its outputs.
         # make sure you disable before submitting
-        # print(grad_input)
-        # logger.info("grad_output: %s", grad_bias.shape)
+        print(grad_input)
+        logger.info("grad_output: %s", grad_bias.shape)
 
         return grad_input, grad_weight, grad_bias
     
