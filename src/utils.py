@@ -11,7 +11,8 @@ from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classifica
 class Pipeline:
     def __init__(self):
 
-        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cpu' if torch.cuda.is_available() else 'cpu')
+        print(self.device)
 
         transform = transforms.Compose(
             [transforms.Grayscale(num_output_channels=1),  # Convert image to grayscale
@@ -19,7 +20,11 @@ class Pipeline:
             transforms.Normalize((0.5,), (0.5,))])  # Normalize for grayscale images
 
         trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-        self.trainloader = torch.utils.data.DataLoader(trainset, batch_size=32, shuffle=True, num_workers=2)
+        images = torch.load("/home/skushwaha/DLGroup2/src/tensor_images.pt")
+        labels = torch.load("/home/skushwaha/DLGroup2/src/labels.pt")
+        dataset = torch.utils.data.TensorDataset(images, labels)
+        combined_dataset = torch.utils.data.ConcatDataset([trainset, dataset])
+        self.trainloader = torch.utils.data.DataLoader(combined_dataset, batch_size=32, shuffle=True, num_workers=2)
 
         testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
         self.testloader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
