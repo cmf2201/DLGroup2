@@ -4,8 +4,8 @@
 #SBATCH --mail-type=ALL
 
 #SBATCH -J window_seg
-#SBATCH --output=slurm_output/out%j.out
-#SBATCH --error=slurm_output/err%j.err
+#SBATCH --output=out%j.out
+#SBATCH --error=err%j.err
 
 #SBATCH -N 1
 #SBATCH -n 16
@@ -18,7 +18,7 @@
 module load miniconda3
 
 source activate
-conda activate lab3
+conda activate patching2
 
 module load cuda
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True

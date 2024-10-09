@@ -45,8 +45,6 @@ class Pipeline:
         dataset = CustomDataset(images.to('cpu'), labels) # move everything to cpu
         combined_dataset = torch.utils.data.ConcatDataset([trainset, dataset]) # concat cifar and custom dataset
         self.trainloader = torch.utils.data.DataLoader(combined_dataset, batch_size=32, shuffle=True, num_workers=0) # pass combined dataset to trainloader
-        combined_dataset = torch.utils.data.ConcatDataset([trainset, dataset])
-        self.trainloader = torch.utils.data.DataLoader(combined_dataset, batch_size=32, shuffle=True, num_workers=2)
 
         testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
         self.testloader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)

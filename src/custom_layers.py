@@ -91,7 +91,7 @@ class CustomSoftmaxLayer(torch.autograd.Function):
         dim = ctx.dim
         softmax_output_t = torch.transpose(softmax_output, 0, 1)
 
-        i = torch.eye(softmax_output.shape[1]).to('cuda:0')
+        i = torch.eye(softmax_output.shape[1])
         # print(i.shape)
         # print(softmax_output_t.shape)
         # print(grad_output.shape)
