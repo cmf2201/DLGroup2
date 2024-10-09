@@ -6,12 +6,13 @@ import torchvision
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
+from dataset import DiffusionDataset
 
 
 class Pipeline:
     def __init__(self):
 
-        self.device = torch.device('cpu' if torch.cuda.is_available() else 'cpu')
+        self.device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
         print(self.device)
 
         transform = transforms.Compose(
@@ -20,11 +21,18 @@ class Pipeline:
             transforms.Normalize((0.5,), (0.5,))])  # Normalize for grayscale images
 
         trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-        images = torch.load("/home/skushwaha/DLGroup2/src/tensor_images.pt")
-        labels = torch.load("/home/skushwaha/DLGroup2/src/labels.pt")
-        dataset = torch.utils.data.TensorDataset(images, labels)
-        combined_dataset = torch.utils.data.ConcatDataset([trainset, dataset])
-        self.trainloader = torch.utils.data.DataLoader(combined_dataset, batch_size=32, shuffle=True, num_workers=2)
+        images_pth = "/home/ctnguyen/DLGroup2/src/tensor_images.pt"
+        labels_pth = "/home/ctnguyen/DLGroup2/src/labels.pt"
+        dataset = DiffusionDataset(images_pth, labels_pth)
+        # combined_dataset = torch.utils.data.ConcatDataset([trainset, dataset])
+        cifarloader = torch.utils.data.DataLoader(trainset, batch_size=32, shuffle=True, num_workers=2)
+        diffusionloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=True, num_workers=2)
+        for item in diffusionloader:
+            print('\n\nITERATION\n\n')
+            img_cifar, label_cifar = item
+
+            print(img_cifar.size())
+            print(label_cifar)
 
         testset = torchvision.datasets.CIFAR10(root='./data', train=False, download=True, transform=transform)
         self.testloader = torch.utils.data.DataLoader(testset, batch_size=32, shuffle=False, num_workers=2)
