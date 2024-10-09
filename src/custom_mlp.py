@@ -12,7 +12,7 @@ model = net.CustomMLP().to(pipeline.device)
 
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-4)
 
-JOB_FOLDER="/home/skushwaha/DLGroup2/src/Outputs"
+JOB_FOLDER="/home/ctnguyen/DLGroup2/src/Outputs"
 TRAINED_MDL_PATH = os.path.join(JOB_FOLDER, "cifar/mlp/")
 
 import os
