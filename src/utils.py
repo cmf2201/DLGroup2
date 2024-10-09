@@ -40,7 +40,11 @@ class Pipeline:
         trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
         images = torch.load("/home/skushwaha/DLGroup2/src/tensor_images.pt")
         labels = torch.load("/home/skushwaha/DLGroup2/src/labels.pt")
-        dataset = torch.utils.data.TensorDataset(images, labels)
+        labels = labels.tolist() # converts label tensor to list
+        labels = [label - 1 for label in labels] # coverts labels 1-10 to 0-9 to match cifar labels
+        dataset = CustomDataset(images.to('cpu'), labels) # move everything to cpu
+        combined_dataset = torch.utils.data.ConcatDataset([trainset, dataset]) # concat cifar and custom dataset
+        self.trainloader = torch.utils.data.DataLoader(combined_dataset, batch_size=32, shuffle=True, num_workers=0) # pass combined dataset to trainloader
         combined_dataset = torch.utils.data.ConcatDataset([trainset, dataset])
         self.trainloader = torch.utils.data.DataLoader(combined_dataset, batch_size=32, shuffle=True, num_workers=2)
 
