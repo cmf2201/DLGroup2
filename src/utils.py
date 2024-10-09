@@ -5,6 +5,8 @@ import torchvision.transforms as transforms
 import torchvision
 import matplotlib.pyplot as plt
 import numpy as np
+import os
+import glob
 from sklearn.metrics import confusion_matrix, ConfusionMatrixDisplay, classification_report
 from torch.utils.data import Dataset, ConcatDataset
 import torchvision.transforms.functional as TF
@@ -12,9 +14,20 @@ import torchvision.transforms.functional as TF
 class CustomDataset(Dataset): # define sub class from torch data Dataset class to create custom dataset
 
     # instructions to create custom dataset subclass found here: https://pytorch.org/tutorials/beginner/basics/data_tutorial.html
-    def __init__(self, images, labels):
-        self.images = images
-        self.labels = labels
+    def __init__(self):
+        folder_of_pt = os.path.expanduser('~') + '/DLGroup2/src/Checkpoints'
+        self.images_pt = glob.glob(folder_of_pt + '/*.*')
+
+        tensor_all_images = torch.Tensor([])
+        tensor_all_labels = torch.Tensor([])
+        for pt in self.images_pt:
+            image_batch_tensor = torch.load(pt).to('cpu') # 80x3x32x32
+            torch.concat([tensor_all_images, image_batch_tensor], dim=0)
+            torch.concat([tensor_all_labels, torch.Tensor([int(k/8) for k in range(80)])], dim=0)
+
+        self.images = tensor_all_images #50000,3,32,32
+        self.labels = tensor_all_labels #50000
+
 
     def __len__(self):
         return len(self.images)
@@ -38,11 +51,12 @@ class Pipeline:
             transforms.Normalize((0.5,), (0.5,))])  # Normalize for grayscale images
 
         trainset = torchvision.datasets.CIFAR10(root='./data', train=True, download=True, transform=transform)
-        images = torch.load("/home/skushwaha/DLGroup2/src/tensor_images.pt")
-        labels = torch.load("/home/skushwaha/DLGroup2/src/labels.pt")
-        labels = labels.tolist() # converts label tensor to list
-        labels = [label - 1 for label in labels] # coverts labels 1-10 to 0-9 to match cifar labels
-        dataset = CustomDataset(images.to('cpu'), labels) # move everything to cpu
+        # images = torch.load("/home/skushwaha/DLGroup2/src/tensor_images.pt")
+        # labels = torch.load("/home/skushwaha/DLGroup2/src/labels.pt")
+        # labels = labels.tolist() # converts label tensor to list
+        # labels = [label - 1 for label in labels] # coverts labels 1-10 to 0-9 to match cifar labels
+        # images.to('cpu'), labels
+        dataset = CustomDataset() # move everything to cpu
         combined_dataset = torch.utils.data.ConcatDataset([trainset, dataset]) # concat cifar and custom dataset
         self.trainloader = torch.utils.data.DataLoader(combined_dataset, batch_size=32, shuffle=True, num_workers=0) # pass combined dataset to trainloader
 
@@ -126,3 +140,8 @@ def imshow(img):
     plt.show()
 
 LOSS_FN = nn.CrossEntropyLoss()
+
+if __name__ == '__main__':
+    label_array = [int(k/8) for k in range(80)]
+
+    print(label_array)

@@ -45,7 +45,7 @@ class CustomLinearLayer(torch.autograd.Function):
         # use either print or logger to print its outputs.
         # make sure you disable before submitting
         # print(grad_input)
-        logger.info("grad_output: %s", grad_bias.shape)
+        # logger.info("grad_output: %s", grad_bias.shape)
 
         return grad_input, grad_weight, grad_bias
     
